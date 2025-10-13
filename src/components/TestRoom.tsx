@@ -157,7 +157,7 @@ function TestRoomCanvas() {
         />
 
         <Suspense fallback={<Html center>Loading model...</Html>}>
-          <Model modelPath={import.meta.env.BASE_URL + "models/Bedroom.glb"} />
+          <Model modelPath="/PersonalPortfolioV2/models/Bedroom.glb" />
           
         </Suspense>
         
