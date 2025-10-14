@@ -4,7 +4,7 @@ import '../RoomSpecficBottomPanel.css'
 function InitialMessage({ children }: { children?: React.ReactNode }) {
   
   return (
-    <div className='RoomSpecficBottomPanel'>
+    <div className='RoomSpecificBottomPanel'>
       <p>
         Objective: Learn more about occupant of Odysseus 1.
         <br></br><br></br>

@@ -1,17 +1,17 @@
-.LeftPanel {
+.RightPanel {
     width: 80%;
     height: 90%;
     display: flex;
     flex-direction: column;
     background: rgba(0, 0, 0, 0.5); /* fully opaque white */
     border: 1px solid rgb(255, 255, 255, 0.5); /* thin white border */
-    backdrop-filter: blur(7px);           
+    backdrop-filter: blur(7px);         
     border-left: 2px solid transparent;
     border-right: 2px solid transparent;
   
 }
 
-.LeftPanelTop {
+.RightPanelTop {
     height: 5%;
     width: 100%;
     display: flex;
@@ -19,39 +19,39 @@
     border: 1px solid white;
 }
 
-.LeftPanelTopLeft {
+.RightPanelTopLeft {
     height: 100%;
     width: 5%;
 }
 
-.LeftPanelTopCenter {
+.RightPanelTopCenter {
     height: 100%;
     width: 90%;
 }
 
-.LeftPanelTopRight {
+.RightPanelTopRight {
     height: 100%;
     width: 5%;
 }
 
-.LeftPanelBottom {
+.RightPanelBottom {
     height: 95%;
     width: 100%;
 }
 
-.LeftPanel.invisible {
+.RightPanel.invisible {
     visibility: hidden;
 }
 
-.LeftPanel.invisible * {
+.RightPanel.invisible * {
     visibility: hidden;
 }
 
-.LeftPanel.visible {
+.RightPanel.visible {
     visibility: visible;
     
 }
 
-.LeftPanel.visible * {
+.RightPanel.visible * {
     visibility: visible;
 }

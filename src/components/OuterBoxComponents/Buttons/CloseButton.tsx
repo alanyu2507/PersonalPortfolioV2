@@ -1,25 +1,28 @@
 import React, { useContext, useEffect, useRef } from 'react'
 import { FileContext } from '../../../Contexts/FileContext'
 
-function CloseButton() {
-  const { setFolderName } = useContext(FileContext)
-  const buttonRef = useRef<HTMLButtonElement>(null)
+interface CloseButtonProps {
+  window: 'left' | 'right';
+}
+
+function CloseButton({ window }: CloseButtonProps) {
+  const { setFolderName, setFileName, zoomOut } = useContext(FileContext)
+  
   
   const handleClick = (event?: any) => {
-    setFolderName("")
-  }
-  
-  const handleClickReact = (event: React.MouseEvent) => {
-    event.preventDefault()
-    event.stopPropagation()
-    handleClick()
+    if (window === 'left') {
+      setFolderName("")
+      setFileName("")
+      zoomOut()
+    } else if (window === 'right') {
+      setFileName("")
+    } // Zoom out to original position when closing
   }
   
   
   return (
     <button 
-      ref={buttonRef}
-      onClick={handleClickReact}
+      onClick={handleClick}
       style={{
         width: '100%',
         height: '100%',
@@ -31,7 +34,6 @@ function CloseButton() {
         fontSize: '16px',
         fontWeight: 'bold',
         color: 'white',
-        zIndex: 9999,
         position: 'relative',
         pointerEvents: 'auto'
       }}

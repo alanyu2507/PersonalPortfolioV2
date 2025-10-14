@@ -4,6 +4,7 @@ import Crosshair from './components/UI Aesthetics/Crosshair'
 import XYCoordinates from './components/UI Aesthetics/XYCoordinates'
 import OuterBoxInnerThirds from './components/OuterBoxComponents/OuterBoxInnerThirds'
 import LeftPanel from './components/OuterBoxComponents/LeftPanel/LeftPanel'
+import RightPanel from './components/OuterBoxComponents/RightPanel/RightPanel'
 
 
 function App() {
@@ -13,14 +14,16 @@ function App() {
       <OuterBox>
         <OuterBoxInnerThirds>
           <LeftPanel>
-            <div>Left Panel Content</div>
+            <div></div>
           </LeftPanel>
         </OuterBoxInnerThirds>
         <OuterBoxInnerThirds>
-          <div>Middle Panel Content</div>
+          <div></div>
         </OuterBoxInnerThirds>
         <OuterBoxInnerThirds>
-          <div>Right Panel Content</div>
+          <RightPanel>
+            <div></div>
+          </RightPanel>
         </OuterBoxInnerThirds>
       </OuterBox>
       <Crosshair>

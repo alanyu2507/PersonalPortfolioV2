@@ -14,13 +14,13 @@ function Model({ modelPath }: { modelPath: string }) {
 
 function CameraController() {
   const { camera, scene } = useThree()
-  const { setHoveredObject } = useContext(CameraContext)
+  const { setHoveredObject, setIsZoomedIn } = useContext(CameraContext)
   const { setXCoordinate, setYCoordinate } = useContext(CameraContext)
-  const { folderName } = useContext(FileContext)
+  const { folderName, setZoomIn, setZoomOut } = useContext(FileContext)
   const [, setZoomLevel] = useState(5) // Initial zoom level
   const minZoom = 1 // Minimum zoom (closer)
   const maxZoom = 20 // Maximum zoom (further)
-  const zoomSpeed = 0.5 // How fast zoom changes
+  const zoomSpeed = 0.2 // How fast zoom changes
   
   // Cursor-based offsets for X and Y
   const cursorOffsets = useRef({ x: 0, y: 0 })
@@ -30,6 +30,52 @@ function CameraController() {
   const finalLookAtPoint = useRef(new THREE.Vector3())
   // Raycaster for object detection
   const raycaster = useRef(new THREE.Raycaster())
+  // Store original camera position
+  const originalPosition = useRef(new THREE.Vector3(0, 2.5, -3.6))
+  // Smooth zoom state
+  const zoomState = useRef({ isZooming: false, targetPosition: new THREE.Vector3(), startPosition: new THREE.Vector3(), progress: 0 })
+  // Track if camera has zoomed in (can only zoom in once until zoomed out)
+  const hasZoomedIn = useRef(false)
+
+  // Smooth zoom function that moves camera 2.5 meters forward in look direction
+  const handleZoomIn = () => {
+    if (zoomState.current.isZooming || hasZoomedIn.current) return; // Prevent multiple zoom operations and only allow one zoom in
+    
+    const cameraDirection = new THREE.Vector3()
+    camera.getWorldDirection(cameraDirection)
+    const targetPosition = camera.position.clone().add(cameraDirection.multiplyScalar(3))
+    
+    zoomState.current = {
+      isZooming: true,
+      targetPosition,
+      startPosition: camera.position.clone(),
+      progress: 0
+    }
+    
+    hasZoomedIn.current = true // Mark that we've zoomed in
+    setIsZoomedIn(true) // Update context state
+  }
+
+  // Smooth zoom out function that returns camera to original position
+  const handleZoomOut = () => {
+    if (zoomState.current.isZooming) return; // Prevent multiple zoom operations
+    
+    zoomState.current = {
+      isZooming: true,
+      targetPosition: originalPosition.current.clone(),
+      startPosition: camera.position.clone(),
+      progress: 0
+    }
+    
+    hasZoomedIn.current = false // Reset zoom state when zooming out
+    setIsZoomedIn(false) // Update context state
+  }
+
+  // Register zoom functions with context
+  useEffect(() => {
+    setZoomIn(handleZoomIn)
+    setZoomOut(handleZoomOut)
+  }, [setZoomIn, setZoomOut])
 
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
@@ -42,7 +88,7 @@ function CameraController() {
         setYCoordinate(y)
         // Calculate cursor-based offsets
         const offsetX = x * 0.5 // -0.5 to +0.5 meters range
-        const offsetY = y * 1 // -0.5 to +0.5 meters range
+        const offsetY = Math.max(-0.5, Math.min(0.1, y * 0.5)) // -0.5 to +0.2 meters range
         
         // Update cursor offsets
         cursorOffsets.current.x = offsetX
@@ -69,6 +115,22 @@ function CameraController() {
   }, [zoomSpeed, minZoom, maxZoom, folderName])
 
   useFrame(() => {
+    // Handle smooth zoom animation
+    if (zoomState.current.isZooming) {
+      zoomState.current.progress += 0.02 // Slower zoom animation
+      if (zoomState.current.progress >= 1) {
+        zoomState.current.progress = 1
+        zoomState.current.isZooming = false
+      }
+      
+      // Smooth interpolation between start and target position
+      camera.position.lerpVectors(
+        zoomState.current.startPosition,
+        zoomState.current.targetPosition,
+        zoomState.current.progress
+      )
+    }
+
     // Smooth interpolation towards target cursor offsets
     const lerpFactor = 0.05 // Adjust for smoother/faster movement
     smoothOffsets.current.x += (cursorOffsets.current.x - smoothOffsets.current.x) * lerpFactor

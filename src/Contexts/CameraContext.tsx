@@ -16,6 +16,8 @@ interface CameraContextType {
   setYCoordinate: (y: number) => void;
   clickedObject: string;
   setClickedObject: (object: string) => void;
+  isZoomedIn: boolean;
+  setIsZoomedIn: (zoomed: boolean) => void;
 }
 
 export const CameraContext = createContext<CameraContextType>({} as CameraContextType);
@@ -28,6 +30,7 @@ export const CameraProvider = ({ children }: { children: React.ReactNode }) => {
   const [xCoordinate, setXCoordinate] = useState(0);
   const [yCoordinate, setYCoordinate] = useState(0);
   const [clickedObject, setClickedObject] = useState("None");
+  const [isZoomedIn, setIsZoomedIn] = useState(false);
 
   return (
     <CameraContext.Provider value={{
@@ -44,7 +47,9 @@ export const CameraProvider = ({ children }: { children: React.ReactNode }) => {
       yCoordinate,
       setYCoordinate,
       clickedObject,
-      setClickedObject
+      setClickedObject,
+      isZoomedIn,
+      setIsZoomedIn
     }}>
       {children}
     </CameraContext.Provider>

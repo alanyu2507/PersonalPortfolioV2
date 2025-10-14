@@ -1,11 +1,11 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 import './CSS/Crosshair.css'
 import { CameraContext } from '../../Contexts/CameraContext'
 import { FileContext } from '../../Contexts/FileContext'
 
 function Crosshair({ children }: { children: React.ReactNode }) {
-  const { hoveredObject } = useContext(CameraContext)
-  const { setFolderName, folderName } = useContext(FileContext)
+  const { hoveredObject, isZoomedIn } = useContext(CameraContext)
+  const { setFolderName, folderName, zoomIn } = useContext(FileContext)
   
   const isHovered = hoveredObject.includes('hover')
   
@@ -16,30 +16,33 @@ function Crosshair({ children }: { children: React.ReactNode }) {
   }
   
   const handleClick = () => {
-    if (isHovered) {
+    if (isHovered && folderName === '') {
       const mappedValue = objectMap[hoveredObject]
       if (mappedValue) {
+        console.log("clicked")
         setFolderName(mappedValue)
+        zoomIn() // Zoom in when setting folder name
       }
     }
   }
   
+  const folderNameRef = useRef(folderName);
+  useEffect(() => { folderNameRef.current = folderName; }, [folderName]);
   useEffect(() => {
     const handleGlobalClick = (event: MouseEvent) => {
-      // Ignore clicks on buttons or other interactive elements
-      const target = event.target as HTMLElement
-      if (target.tagName === 'BUTTON' || target.closest('button')) {
-        return
+      const target = event.target as HTMLElement;
+      if (target.tagName === 'BUTTON' || target.closest('button')) return;
+      if (isHovered && folderNameRef.current === '') {
+        const mappedValue = objectMap[hoveredObject];
+        if (mappedValue) {
+          setFolderName(mappedValue);
+          zoomIn();
+        }
       }
-      handleClick()
-    }
-    
-    document.addEventListener('click', handleGlobalClick)
-    
-    return () => {
-      document.removeEventListener('click', handleGlobalClick)
-    }
-  }, [isHovered, hoveredObject])
+    };
+    document.addEventListener('click', handleGlobalClick);
+    return () => document.removeEventListener('click', handleGlobalClick);
+  }, [isHovered, hoveredObject, setFolderName, zoomIn]);
   
   return (
     <div 

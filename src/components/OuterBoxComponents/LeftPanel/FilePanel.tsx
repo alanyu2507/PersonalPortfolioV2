@@ -3,7 +3,7 @@ import './CSS/FilePanel.css'
 
 function FilePanel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="outerBoxInnerThirds">
+    <div className="FilePanel">
       {children}
     </div>
   )
